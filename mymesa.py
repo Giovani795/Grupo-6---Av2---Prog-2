@@ -72,8 +72,6 @@ def draw_bombeiros(screen, lista_bombeiros):
 def draw_animals(screen, animals):
     remaining_animals = []  # Para armazenar os animais restantes
     for animal in animals:
-        print(f"Animal: ({animal.x}, {animal.y}), Status: {animal.status}")  # Debug
-
         if animal.status == "alive" and not animal.egg:
             screen.blit(
                 im.CHICKEN_IMG, (animal.y * im.cell_size, animal.x * im.cell_size)
@@ -124,7 +122,7 @@ def main():
     start = False  # Controle para verificar se o incêndio deve iniciar
     start2 = False
     loading = False
-    bombeiros = [agent.bombeiro(matriz) for _ in range(110)]
+    bombeiros = [agent.bombeiro(matriz) for _ in range(200)]
     forest.surge_trees = True
 
     # Passos por segundo

@@ -18,7 +18,7 @@ class Agent:
         for dx, dy in directions:
             nx, ny = self.x + dx, self.y + dy
             if 0 <= nx < len(matriz) and 0 <= ny < len(matriz[0]):
-                if isinstance(matriz[nx][ny], Tree) or isinstance(matriz[nx][ny], Bush):
+                if isinstance(matriz[nx][ny], Tree) or isinstance(matriz[nx][ny], Bush): 
                     lista.append(matriz[nx][ny])
 
         return lista
@@ -181,10 +181,9 @@ class Animal(Agent):
             if a == 1:
                 return Animal(self.matriz, self.x, self.y, True)
 
-
 class bombeiro(Agent):
     def __init__(self, matriz):
-        self.step = 0  # Definindo o numero de atualizações para o bombeiro andar
+        self.step = 0  # Definindo o número de atualizações para o bombeiro andar
         self.matriz = matriz  # Matriz da floresta
         self.life = 1  # O bombeiro terá vida igual a 1 e perderá conforme as árvores ao seu redor pegam fogo
         self.status = "alive"
@@ -198,8 +197,14 @@ class bombeiro(Agent):
                 break
 
     def update_condition(self):
-        self.andar()  # O bomebiro anda
-        # Verificando árvores que estão queimando
+        self.andar()  # O bombeiro anda
+
+        # Se o bombeiro está pegando fogo, ele apaga o fogo de si mesmo
+    
+            # Caso contrário, o bombeiro apaga o fogo em uma direção aleatória
+        self.apagar_fogo()
+
+        # Verificando árvores que estão queimando ao redor do bombeiro
         for neigh in self.neighbors(self.matriz):
             if isinstance(neigh, Tree):
                 if neigh.condition == "burning":
@@ -215,20 +220,20 @@ class bombeiro(Agent):
             self.status = "dead"
 
     def andar(self):
-        # A função andar, por enquanto apenas leva o bombeiro para um vizinho aleatório
+        # A função andar agora permite o bombeiro se mover nas 8 direções
         self.step += 1
         if self.step == 5:
             direction = [
-                (0, 1),
-                (0, -1),
-                (1, 0),
-                (-1, 0),
-                (1, 1),
-                (-1, 1),
-                (1, -1),
-                (-1, -1),
+                (0, 1),   # Leste
+                (0, -1),  # Oeste
+                (1, 0),   # Sul
+                (-1, 0),  # Norte
+                (1, 1),   # Sudeste
+                (-1, 1),  # Nordeste
+                (1, -1),  # Sudoeste
+                (-1, -1), # Noroeste
             ]
-            random.shuffle(direction)
+            random.shuffle(direction)  # Para tornar a escolha aleatória
             directions_possi = []
             for dx, dy in direction:
                 nx, ny = self.x + dx, self.y + dy
@@ -248,6 +253,21 @@ class bombeiro(Agent):
                 self.x, self.y = a[0], a[1]
 
             self.step = 0
+
+    def apagar_fogo(self):
+        # Direções possíveis para o bombeiro apagar fogo (8 direções)
+        lista =  self.neighbors(self.matriz)
+        
+        for neigh in lista:
+            neigh.condition = "alive"
+            # Verifica se a célula na direção escolhida é uma árvore ou arbusto queimando
+            print(1)
+    def apagar_fogo_de_si(self):
+        # Verifica se o bombeiro está pegando fogo e apaga o fogo dele
+        if self.status == "burning" or self.status == "burning2":
+            self.status = "alive"  # O bombeiro apaga o fogo de si mesmo
+            self.life = 1  # O bombeiro recupera sua vida
+
 
 
 class buttom:
