@@ -198,10 +198,6 @@ class bombeiro(Agent):
 
     def update_condition(self):
         self.andar()  # O bombeiro anda
-
-        # Se o bombeiro está pegando fogo, ele apaga o fogo de si mesmo
-    
-            # Caso contrário, o bombeiro apaga o fogo em uma direção aleatória
         self.apagar_fogo()
 
         # Verificando árvores que estão queimando ao redor do bombeiro
