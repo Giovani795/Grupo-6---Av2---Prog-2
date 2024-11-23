@@ -180,7 +180,7 @@ class Animal(Agent):
             if a == 1:
                 return Animal(self.matriz, self.x, self.y, True)
 
-
+"""""
 class Bird:
     def __init__(self, matriz, x=None, y=None):
         self.matriz = matriz
@@ -225,6 +225,95 @@ class Bird:
         a = random.randint(0, 10)
         if a == 1:
             list_birds.append(Bird(self.matriz))
+"""""
+
+class Bird:
+    def __init__(self, matrix, x=None, y=None):
+        if x and y:
+            self.x, self.y = x,y
+        else:
+            while True:
+                self.x = random.randint(0, len(matrix) - 1)
+                self.y = random.randint(0, len(matrix[0]) - 1)
+                cell = matrix[self.x][self.y]
+                if isinstance(cell, Tree):
+                    break
+
+        self.status = "alive"
+        self.age = 0
+        self.lifespan = random.randint(20, 50)
+        self.matrix = matrix
+
+    def move(self):
+        if self.status != "alive":
+            return
+
+        direction = random.choice(["up", "down", "left", "right"])
+        if direction == "up":
+            self.x -= 1
+        elif direction == "down":
+            self.x += 1
+        elif direction == "left":
+            self.y -= 1
+        elif direction == "right":
+            self.y += 1
+
+        if self.x<0 or self.x>=len(self.matrix):
+            self.status = "dead"
+        elif self.y<0 or self.y>=len(self.matrix[0]):
+            self.status = "dead"
+        elif self.matrix[self.x][self.y] == "black":
+            self.status= "dead"
+
+    def plant_tree(self,seed_prob=0.1):
+        if self.status != "alive":
+            return
+        
+        if self.matrix[self.x][self.y] == "v" and random.random() < seed_prob:
+            self.matrix[self.x][self.y] = Tree([self.x, self.y])
+
+    def check_fire(self, fire_radius=1):
+        if self.status != "alive":
+            return False
+
+        for dx in range(-fire_radius, fire_radius + 1):
+            for dy in range(-fire_radius, fire_radius + 1):
+                nx, ny = self.x + dx, self.y + dy
+                if 0 <= nx < len(self.matrix) and 0 <= ny < len(self.matrix[0]):
+                    cell = self.matrix[nx][ny]
+                    if isinstance(cell, Tree) and cell.condition == "burning":
+                        self.status = "burning"
+                        return True
+        return False
+
+    def reproduce(self, birds, mating_prob=0.1, max_birds=300):
+        if len(birds)>=max_birds:
+            return
+        if self.age >= 10:  # O pássaro pode começar a se reproduzir após atingir certa idade
+            # Verificar se há outros pássaros nas proximidades
+            nearby_birds = [
+                bird for bird in birds
+                if abs(bird.x - self.x) <= 3 and abs(bird.y - self.y) <= 3 and bird != self
+            ]
+            if nearby_birds and random.random() < mating_prob:  # 10% de chance de reprodução
+                # Gerar um novo pássaro em uma posição próxima
+                new_bird = Bird(self.matrix, x=self.x + random.choice([-1, 0, 1]), y=self.y + random.choice([-1, 0, 1]))
+                birds.append(new_bird)
+
+    def update_condition(self, birds):
+        if self.status == "dead":
+            return
+        
+        self.move()
+        self.plant_tree()
+        self.reproduce(birds)
+        self.age += 1
+
+        if self.age >= self.lifespan or self.check_fire():
+            self.status = "dead"
+
+    def at_listbirds(self, list_birds):
+        list_birds[:] = [bird for bird in list_birds if bird.status != "dead"]
 
 
 class bombeiro(Agent):

@@ -139,7 +139,7 @@ def main():
     loading = False
     num_fireman = 20
     bombeiros = [agent.bombeiro(matriz) for _ in range(num_fireman)]
-    birds = [agent.Bird(matriz) for _ in range(10)]
+    birds = [agent.Bird(matriz) for _ in range(150)]
     forest.surge_trees = False
 
     # Passos por segundo
@@ -258,7 +258,7 @@ def main():
                             animals.append(a)
                     if birds:
                         for bird in birds:
-                            bird.update_condition()
+                            bird.update_condition(birds)
                         birds[0].at_listbirds(birds)
                     else:
                         birds.append(agent.Bird(matriz))
